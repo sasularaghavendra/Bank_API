@@ -12,74 +12,116 @@ namespace Database_Repository.Repository
     public class AccountBalanceAccess
     {
         private readonly BankDbContext _bankDbContext;
+        private readonly ServiceResponse<AccountBalance> serviceResponse = new ServiceResponse<AccountBalance>();
         public AccountBalanceAccess(BankDbContext bankDbContext)
         {
             _bankDbContext = bankDbContext;
         }
-        public async Task<ActionResult<AccountBalance>> AddAmount(AccountBalance accountBalance)
+        public async Task<ServiceResponse<AccountBalance>> AddAmount(AccountBalance accountBalance)
         {
-           
-            //Adding data into transaction table to capture transaction history
-            TransactionAudit audit = new TransactionAudit();
-            audit.ActionId = 5; // FirstTime Add Amount
-            audit.CustomerId = accountBalance.CustomerId;
-            audit.Balance = accountBalance.Balance;
-            audit.CreatedDate = DateTime.Now;
-            await _bankDbContext.TransactionAudits.AddAsync(audit);
-
-            await _bankDbContext.AccountBalances.AddAsync(accountBalance);
-            await _bankDbContext.SaveChangesAsync();
-
-            return accountBalance;
-        }
-        public async Task<ActionResult<AccountBalance>> DepositAccountBalance(AccountBalance accountBalance)
-        {
-            var depositAccountDetails = await _bankDbContext.AccountBalances.Include(x =>x.Customer).ThenInclude(x =>x.Account)
-                                                                            .FirstOrDefaultAsync(x => x.AccountNumber == accountBalance.AccountNumber);
-            if (depositAccountDetails != null)
+            try
             {
+                accountBalance.AccountBalanceId = 0; //Identity column
                 //Adding data into transaction table to capture transaction history
                 TransactionAudit audit = new TransactionAudit();
-                audit.ActionId = 1; //Deposit
-                audit.CustomerId = depositAccountDetails.CustomerId;
+                audit.ActionId = 1; // FirstTime Add Amount
+                audit.CustomerId = accountBalance.CustomerId;
                 audit.Balance = accountBalance.Balance;
                 audit.CreatedDate = DateTime.Now;
                 await _bankDbContext.TransactionAudits.AddAsync(audit);
-
-                depositAccountDetails.Balance = (depositAccountDetails.Balance + accountBalance.Balance);
-                _bankDbContext.AccountBalances.Update(depositAccountDetails);
+                await _bankDbContext.AccountBalances.AddAsync(accountBalance);
                 await _bankDbContext.SaveChangesAsync();
-                return depositAccountDetails;
+
+                serviceResponse.Data = accountBalance;
+                serviceResponse.Message = $"First time amount added successfully...Balance is {accountBalance.Balance}";
+                return serviceResponse;
             }
-            return null;
-        }
-        public async Task<ActionResult<AccountBalance>> WithdrawAccountBalance(AccountBalance accountBalance)
-        {
-            var depositAccountDetails = await _bankDbContext.AccountBalances.Include(x => x.Customer)
-                                                                            .ThenInclude(x => x.Account)
-                                                                            .FirstOrDefaultAsync(x => x.AccountNumber == accountBalance.AccountNumber);
-            if (depositAccountDetails != null)
+            catch(Exception ex)
             {
-                if (depositAccountDetails.Balance < accountBalance.Balance)
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+                return serviceResponse;
+            }
+        }
+        public async Task<ServiceResponse<AccountBalance>> DepositAccountBalance(AccountBalance accountBalance)
+        {
+            try
+            {
+                var depositAccountDetails = await _bankDbContext.AccountBalances.Include(x => x.Customer)
+                                                                .ThenInclude(x => x.Account)
+                                                                .FirstOrDefaultAsync(x => x.AccountNumber == accountBalance.AccountNumber && x.AccountId ==accountBalance.AccountId);
+                if (depositAccountDetails != null)
                 {
-                    return null;
-                }
-                else
-                {
+                    accountBalance.AccountBalanceId = 0; //Identity column
                     //Adding data into transaction table to capture transaction history
                     TransactionAudit audit = new TransactionAudit();
-                    audit.ActionId = 2; //Withdraw
+                    audit.ActionId = 2; //Deposit
                     audit.CustomerId = depositAccountDetails.CustomerId;
                     audit.Balance = accountBalance.Balance;
                     audit.CreatedDate = DateTime.Now;
                     await _bankDbContext.TransactionAudits.AddAsync(audit);
-                    depositAccountDetails.Balance = (depositAccountDetails.Balance - accountBalance.Balance);
+
+                    depositAccountDetails.Balance = (depositAccountDetails.Balance + accountBalance.Balance);
                     _bankDbContext.AccountBalances.Update(depositAccountDetails);
                     await _bankDbContext.SaveChangesAsync();
-                    return depositAccountDetails;
+                    serviceResponse.Data = depositAccountDetails;
+                    serviceResponse.Message = $"Amount {accountBalance.Balance} deposited successfully..Total available balance is {depositAccountDetails.Balance}";
+                    return serviceResponse;
                 }
+                serviceResponse.Success = false;
+                serviceResponse.Message = $"Invalid account number (or) AccountId... Please enter valid account details to deposit.";
+                return serviceResponse;
             }
-            return null;
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+                return serviceResponse;
+            }
+        }
+        public async Task<ServiceResponse<AccountBalance>> WithdrawAccountBalance(AccountBalance accountBalance)
+        {
+            try
+            {
+                var depositAccountDetails = await _bankDbContext.AccountBalances.Include(x => x.Customer)
+                                                                            .ThenInclude(x => x.Account)
+                                                                            .FirstOrDefaultAsync(x => x.AccountNumber == accountBalance.AccountNumber && x.AccountId == accountBalance.AccountId);
+                if (depositAccountDetails != null)
+                {
+                    if (depositAccountDetails.Balance < accountBalance.Balance)
+                    {
+                        serviceResponse.Success = false;
+                        serviceResponse.Message = $"Insufficient funds.... Available balance in your account is {depositAccountDetails.Balance}";
+                        return serviceResponse;
+                    }
+                    else
+                    {
+                        accountBalance.AccountBalanceId = 0; //Identity column
+                        //Adding data into transaction table to capture transaction history
+                        TransactionAudit audit = new TransactionAudit();
+                        audit.ActionId = 3; //Withdraw
+                        audit.CustomerId = depositAccountDetails.CustomerId;
+                        audit.Balance = accountBalance.Balance;
+                        audit.CreatedDate = DateTime.Now;
+                        await _bankDbContext.TransactionAudits.AddAsync(audit);
+                        depositAccountDetails.Balance = (depositAccountDetails.Balance - accountBalance.Balance);
+                        _bankDbContext.AccountBalances.Update(depositAccountDetails);
+                        await _bankDbContext.SaveChangesAsync();
+                        serviceResponse.Data = depositAccountDetails;
+                        serviceResponse.Message = $"Amount {accountBalance.Balance} withdrawn successfull.. Available balance is {depositAccountDetails.Balance}";
+                        return serviceResponse;
+                    }
+                }
+                serviceResponse.Success = false;
+                serviceResponse.Message = $"Invalid account number (or) AccountId... Please enter valid account details to withdraw.";
+                return serviceResponse;
+            }
+            catch(Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+                return serviceResponse;
+            }
         }
     }
 }

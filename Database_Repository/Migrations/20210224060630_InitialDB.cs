@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Database_Repository.Migrations
 {
@@ -52,7 +53,7 @@ namespace Database_Repository.Migrations
                         column: x => x.AccountId,
                         principalTable: "Accounts",
                         principalColumn: "AccountId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -61,20 +62,26 @@ namespace Database_Repository.Migrations
                 {
                     AccountBalanceId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountId = table.Column<int>(type: "int", nullable: false),
                     AccountNumber = table.Column<long>(type: "bigint", nullable: false),
-                    Balance = table.Column<float>(type: "real", nullable: false),
+                    AccountId = table.Column<int>(type: "int", nullable: false),
+                    Balance = table.Column<double>(type: "float", nullable: false),
                     CustomerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AccountBalances", x => x.AccountBalanceId);
+                    table.PrimaryKey("PK_AccountBalances", x => new { x.AccountBalanceId, x.AccountNumber });
+                    table.ForeignKey(
+                        name: "FK_AccountBalances_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Accounts",
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_AccountBalances_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
                         principalColumn: "CustomerId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -85,7 +92,8 @@ namespace Database_Repository.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ActionId = table.Column<int>(type: "int", nullable: false),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
-                    Balance = table.Column<double>(type: "float", nullable: false)
+                    Balance = table.Column<double>(type: "float", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -95,14 +103,19 @@ namespace Database_Repository.Migrations
                         column: x => x.ActionId,
                         principalTable: "Actions",
                         principalColumn: "ActionId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_TransactionAudits_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
                         principalColumn: "CustomerId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AccountBalances_AccountId",
+                table: "AccountBalances",
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AccountBalances_CustomerId",

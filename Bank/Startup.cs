@@ -1,9 +1,11 @@
 
+using Bank.AuthenticationHandler;
 using Bank.Controllers;
 using Bank_Services.Interfaces;
 using Bank_Services.Services;
 using Database_Repository.DatabaseContext;
 using Database_Repository.Repository;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -38,16 +40,21 @@ namespace Bank
             services.AddScoped<ICustomer,CustomerService>();
             services.AddScoped<IAccount,AccountService>();
             services.AddScoped<IActionData, ActionService>();
-            //services.AddScoped<IAccountBalance, AccountBalanceService>();
+            services.AddScoped<IAccountBalance, AccountBalanceService>();
+            services.AddScoped<IAuthentication, Bank_Services.Services.AuthenticationService>();
             services.AddScoped<CustomerService>();
             services.AddScoped<AccountService>();
             services.AddScoped<ActionService>();
             services.AddScoped<AccountBalanceService>();
+            services.AddScoped<Bank_Services.Services.AuthenticationService>();
             services.AddScoped<DataAccess>();
             services.AddScoped<AccountDbAccess>();
             services.AddScoped<ActionAccess>();
             services.AddScoped<AccountBalanceAccess>();
-        
+            services.AddScoped<AuthenticationAccess>();
+
+            services.AddAuthentication("BasicAuthentication")
+                    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
             services.AddDbContext<BankDbContext>(options =>
                      options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -69,6 +76,7 @@ namespace Bank
             }
 
             app.UseRouting();
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

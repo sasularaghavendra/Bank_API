@@ -22,66 +22,29 @@ namespace Bank.Controllers
         }
 
         [HttpPost("AddAction")]
-        public ActionResult<ActionData> AddAction(ActionData action)
+        public async Task<ServiceResponse<ActionData>> AddAction(ActionData action)
         {
-            var actionDetails = _actionService.AddAction(action);
-
-            if (actionDetails != null)
-            {
-                return actionDetails;
-            }
-            else
-            {
-                return Ok("Error Occured..");
-            }
+            return await _actionService.AddAction(action);
         }
         [HttpPut("EditAction")]
-        public ActionResult<ActionData> EditAction(ActionData action)
+        public async Task<ServiceResponse<ActionData>> EditAction(ActionData action)
         {
-            var actionDetails = _actionService.EditAction(action);
-
-            if (actionDetails != null)
-            {
-                return actionDetails;
-            }
-            else
-            {
-                return Ok("Error occured..No data found.");
-            }
+            return await _actionService.EditAction(action);
         }
-        [HttpDelete("{actionId}, Name = DeleteAction")]
-        public ActionResult<ActionData> DeleteAction(int actionId)
+        [HttpDelete("{actionId}")]
+        public async Task<ServiceResponse<ActionData>> DeleteAction(int actionId)
         {
-            var actionDetails = _actionService.DeleteAction(actionId);
-
-            if (actionDetails != null)
-            {
-                return actionDetails;
-            }
-            else
-            {
-                return Ok("Error Occured..");
-            }
+            return await _actionService.DeleteAction(actionId);
         }
         [HttpGet("GetAllActions")]
-        public ICollection<ActionData> GetAllActions()
+        public async Task<ServiceResponse<List<ActionData>>> GetAllActions()
         {
-            var actionDetails = _actionService.GetAllActions();
-            if (actionDetails.Count != 0)
-            {
-                return actionDetails.ToList();
-            }
-            return null;
+            return await _actionService.GetAllActions();
         }
-        [HttpGet("{actionId}, Name = GetAction")]
-        public ActionResult<ActionData> GetAction(int actionId)
+        [HttpGet("{actionId}")]
+        public async Task<ServiceResponse<ActionData>> GetAction(int actionId)
         {
-            var actionDetails = _actionService.GetAction(actionId);
-            if (actionDetails.Value != null)
-            {
-                return actionDetails;
-            }
-            return Ok("No Data Found");
+            return await _actionService.GetAction(actionId);
         }
     }
 }

@@ -20,55 +20,29 @@ namespace Bank.Controllers
         }
 
         [HttpPost("AddAccountDetails")]
-        public ActionResult<Account> AddAccount(Account account)
+        public async Task<ServiceResponse<Account>> AddAccount(Account account)
         {
-            var acc = _accountService.AddAccount(account);
-            if(acc != null)
-            {
-                return acc;
-            }
-            return Ok("Error Occured");
+            return await _accountService.AddAccount(account);
         }
         [HttpPut("EditAccountDetails")]
-        public ActionResult<Account> EditAccount(Account account)
+        public async Task<ServiceResponse<Account>> EditAccount(Account account)
         {
-            var acc = _accountService.EditAccount(account);
-            if (acc != null)
-            {
-                return acc;
-            }
-            return Ok("Error Occured");
+            return await _accountService.EditAccount(account);
         }
         [HttpGet("GetAllAccountDetails")]
-        public ICollection<Account> GetAllAccounts()
+        public async Task<ServiceResponse<List<Account>>> GetAllAccounts()
         {
-            var acc = _accountService.GetAccounts();
-            if (acc != null)
-            {
-                return acc.ToList();
-            }
-            return null;
+            return await _accountService.GetAccounts();
         }
-        [HttpGet("{id},Name= GetAccount")]
-        public Account GetAllAccount(int id)
+        [HttpGet("{id}")]
+        public async Task<ServiceResponse<Account>> GetAllAccount(int id)
         {
-            var acc = _accountService.GetAccount(id);
-            if (acc != null)
-            {
-                return acc;
-            }
-            return null;
+            return await _accountService.GetAccount(id);
         }
-        [HttpDelete("{id}, Name= DeleteAccount")]
-        public ActionResult<Account> DeleteAccount(int id)
+        [HttpDelete("{id}")]
+        public async Task<ServiceResponse<Account>> DeleteAccount(int id)
         {
-            var acc = _accountService.DeleteAccount(id);
-            if(acc != null)
-            {
-                return acc;
-            }
-            return Ok("Error Occured");
+            return await _accountService.DeleteAccount(id);
         }
-
     }
 }

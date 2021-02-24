@@ -16,15 +16,15 @@ namespace Bank_Services.Services
         {
             _accountBalanceAccess = accountBalanceAccess;
         }
-        public async Task<ActionResult<AccountBalance>> AddAmount(AccountBalance accountBalance)
+        public async Task<ServiceResponse<AccountBalance>> AddAmount(AccountBalance accountBalance)
         {
             return await _accountBalanceAccess.AddAmount(accountBalance);
         }
-        public async Task<ActionResult<AccountBalance>> DepositAccountBalance(AccountBalance accountBalance)
+        public async Task<ServiceResponse<AccountBalance>> DepositAccountBalance(AccountBalance accountBalance)
         {
             return await _accountBalanceAccess.DepositAccountBalance(accountBalance);
         }
-        public async Task<ActionResult<AccountBalance>> WithdrawAccountBalance(AccountBalance accountBalance)
+        public async Task<ServiceResponse<AccountBalance>> WithdrawAccountBalance(AccountBalance accountBalance)
         {
             return await _accountBalanceAccess.WithdrawAccountBalance(accountBalance);
         }

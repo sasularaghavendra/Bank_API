@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Bank_Services.Services
 {
@@ -15,37 +16,25 @@ namespace Bank_Services.Services
         {
             _actionAccess = actionAccess;
         }
-        public ActionResult<ActionData> AddAction(ActionData action)
+        public async Task<ServiceResponse<ActionData>> AddAction(ActionData action)
         {
-            var actionDetails = _actionAccess.AddAction(action);
-            return actionDetails;
+            return await _actionAccess.AddAction(action);
         }
-
-        public ActionResult<ActionData> DeleteAction(int actionId)
+        public async Task<ServiceResponse<ActionData>> DeleteAction(int actionId)
         {       
-            var deletedActionDetails = _actionAccess.DeleteAction(actionId);
-            return deletedActionDetails;
+            return await _actionAccess.DeleteAction(actionId);
         }
-        public ActionResult<ActionData> EditAction(ActionData action)
+        public async Task<ServiceResponse<ActionData>> EditAction(ActionData action)
         {
-            if(action != null)
-            {
-                var editAction = _actionAccess.EditAction(action);
-                return editAction;
-            }
-            return null;           
+            return await _actionAccess.EditAction(action);
         }
-        public ActionResult<ActionData> GetAction(int actionId)
+        public async Task<ServiceResponse<ActionData>> GetAction(int actionId)
         {
-            var getAction = _actionAccess.GetAction(actionId);
-            return getAction;
-
+            return await _actionAccess.GetAction(actionId);
         }
-
-        public ICollection<ActionData> GetAllActions()
+        public async Task<ServiceResponse<List<ActionData>>> GetAllActions()
         {
-            var getAllActions = _actionAccess.GetAllActions();
-            return getAllActions;
+            return await _actionAccess.GetAllActions();
         }
     }
 }

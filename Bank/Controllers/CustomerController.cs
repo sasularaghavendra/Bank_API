@@ -19,70 +19,31 @@ namespace Bank.Controllers
         public CustomerController(CustomerService customerService)
         {
             _customerService = customerService;
-
         }
         [HttpPost("AddCustomer")]
-        public ActionResult<Customer> AddCustomer(Customer customer)
+        public Task<ServiceResponse<Customer>> AddCustomer(Customer customer)
         {
-            var customerDetails = _customerService.AddCustomer(customer);
-
-            if(customerDetails != null)
-            {
-                return customerDetails;
-            }
-            else
-            {
-                return Ok("Error Occured..");
-            }
+            return _customerService.AddCustomer(customer);
         }
         [HttpPut("EditCustomer")]
-        public ActionResult<Customer> EditCustomer(Customer customer)
+        public Task<ServiceResponse<Customer>> EditCustomer(Customer customer)
         {
-            var customerDetails = _customerService.EditCustomer(customer);
-
-            if(customerDetails != null)
-            {
-                return customerDetails;
-            }
-            else
-            {
-                return Ok("Error occured..");
-            }
+            return _customerService.EditCustomer(customer);
         }
-        [HttpDelete("{customerId}, Name = DeleteCustomer")]
-        public ActionResult<Customer> DeleteCustomer(int customerId)
+        [HttpDelete("{customerId}")]
+        public Task<ServiceResponse<Customer>> DeleteCustomer(int customerId)
         {
-            var customerDetails = _customerService.DeleteCustomer(customerId);
-
-            if(customerDetails != null)
-            {
-                return customerDetails;
-            }
-            else
-            {
-                return Ok("Error Occured..");
-            }
+            return _customerService.DeleteCustomer(customerId);
         }
         [HttpGet("GetAllCustomers")]
-        public ICollection<Customer> GetCustomers()
+        public Task<ServiceResponse<List<Customer>>> GetCustomers()
         {
-            var customer = _customerService.GetCustomers();
-            if(customer != null)
-            {
-                return customer.ToList();
-            }
-            return null;
+            return _customerService.GetCustomers();
         }
-        [HttpGet("{customerId}, Name = GetCustomer")]
-        public Customer GetCustomer(int customerId)
+        [HttpGet("{customerId}")]
+        public Task<ServiceResponse<Customer>> GetCustomer(int customerId)
         {
-            var customer = _customerService.GetCustomer(customerId);
-            if (customer != null)
-            {
-                return customer;
-            }
-            return null;
+            return  _customerService.GetCustomer(customerId);
         }
-
     }
 }

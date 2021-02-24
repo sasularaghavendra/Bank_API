@@ -3,16 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Bank_Services.Interfaces
 {
     public interface IActionData
     {
-        ActionResult<ActionData> AddAction(ActionData action);
-        ActionResult<ActionData> EditAction(ActionData action);
-        ActionResult<ActionData> DeleteAction(int actionId);
-
-        ICollection<ActionData> GetAllActions();
-        ActionResult<ActionData> GetAction(int actionId);
+        Task<ServiceResponse<ActionData>> AddAction(ActionData action);
+        Task<ServiceResponse<ActionData>> EditAction(ActionData action);
+        Task<ServiceResponse<ActionData>> DeleteAction(int actionId);
+        Task<ServiceResponse<List<ActionData>>> GetAllActions();
+        Task<ServiceResponse<ActionData>> GetAction(int actionId);
     }
 }

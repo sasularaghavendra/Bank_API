@@ -19,38 +19,20 @@ namespace Bank.Controllers
             _accontBalanceService = accountBalanceService;
         }
         [HttpPost("AddAmount")]
-        public async Task<ActionResult<AccountBalance>> AddAmount(AccountBalance accountBalance)
+        public async Task<ServiceResponse<AccountBalance>> AddAmount(AccountBalance accountBalance)
         {
             return await _accontBalanceService.AddAmount(accountBalance);
         }
 
         [HttpPut("DepositAmount")]
-        public async Task<ActionResult<AccountBalance>> DepositAmount(AccountBalance accountBalance)
+        public async Task<ServiceResponse<AccountBalance>> DepositAmount(AccountBalance accountBalance)
         {
-            var accountDetails = await _accontBalanceService.DepositAccountBalance(accountBalance);
-
-            if (accountDetails != null)
-            {
-                return accountDetails;
-            }
-            else
-            {
-                return Ok("Error Occured..");
-            }
+            return await _accontBalanceService.DepositAccountBalance(accountBalance);
         }
         [HttpPut("WithdrawAmount")]
-        public async Task<ActionResult<AccountBalance>> WithdrawAmount(AccountBalance accountBalance)
+        public async Task<ServiceResponse<AccountBalance>> WithdrawAmount(AccountBalance accountBalance)
         {
-            var accountDetails = await _accontBalanceService.WithdrawAccountBalance(accountBalance);
-
-            if (accountDetails != null)
-            {
-                return accountDetails;
-            }
-            else
-            {
-                return Ok("Error Occured..");
-            }
+            return await _accontBalanceService.WithdrawAccountBalance(accountBalance);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Bank_Models.Models
     public class AccountBalance
     {
         [Key]
-        public int AccountBalanceId { get; set; }     // primary key
+        public int AccountBalanceId { get; set; }     // primary key and Identity
         [Required(ErrorMessage = "AccountId is Required")]
         [ForeignKey("Account")]
         public int AccountId { get; set; }

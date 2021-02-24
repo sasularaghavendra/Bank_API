@@ -3,15 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Bank_Services.Interfaces
 {
     public interface IAccount
     {
-        ActionResult<Account> AddAccount(Account account);
-        ActionResult<Account> EditAccount(Account account);
-        ActionResult<Account> DeleteAccount(int accountId);
-        ICollection<Account> GetAccounts();
-        Account GetAccount(int accountId);
+        Task<ServiceResponse<Account>> AddAccount(Account account);
+        Task<ServiceResponse<Account>> EditAccount(Account account);
+        Task<ServiceResponse<Account>> DeleteAccount(int accountId);
+        Task<ServiceResponse<List<Account>>> GetAccounts();
+        Task<ServiceResponse<Account>> GetAccount(int accountId);
     }
 }

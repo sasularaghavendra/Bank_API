@@ -3,15 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Bank_Services.Interfaces
 {
     public interface ICustomer
-    {
-        Customer AddCustomer(Customer customer);
-        ActionResult<Customer> EditCustomer(Customer customer);
-        ActionResult<Customer> DeleteCustomer(int customerId);
-        ICollection<Customer> GetCustomers();
-        Customer GetCustomer(int customerId);
+    {    
+        Task<ServiceResponse<Customer>> AddCustomer(Customer customer);
+        Task<ServiceResponse<Customer>> EditCustomer(Customer customer);
+        Task<ServiceResponse<Customer>> DeleteCustomer(int customerId);
+        Task<ServiceResponse<List<Customer>>> GetCustomers();
+        Task<ServiceResponse<Customer>> GetCustomer(int customerId);
     }
 }

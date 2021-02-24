@@ -9,7 +9,8 @@ namespace Bank_Services.Interfaces
 {
     public interface IAccountBalance
     {
-        Task<ActionResult<AccountBalance>> DepositAccountBalance(AccountBalance accountBalance);
-        Task<ActionResult<AccountBalance>> WithdrawAccountBalance(AccountBalance accountBalance);
+        Task<ServiceResponse<AccountBalance>> AddAmount(AccountBalance accountBalance);
+        Task<ServiceResponse<AccountBalance>> DepositAccountBalance(AccountBalance accountBalance);
+        Task<ServiceResponse<AccountBalance>> WithdrawAccountBalance(AccountBalance accountBalance);
     }
 }

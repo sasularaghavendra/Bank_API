@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Bank_Services.Services
 {
@@ -15,53 +16,25 @@ namespace Bank_Services.Services
         {
             _dataAccess = dataAccess;
         }
-        public ActionResult<Account> AddAccount(Account account)
+        public async Task<ServiceResponse<Account>> AddAccount(Account account)
         {
-            var acc = _dataAccess.AddAccount(account);
-            if(acc != null)
-            {
-                return acc;
-            }
-            return null;
+            return await _dataAccess.AddAccount(account);
         }
-        public ActionResult<Account> EditAccount(Account account)
+        public async Task<ServiceResponse<Account>> EditAccount(Account account)
         {
-            var acc = _dataAccess.EditAccount(account);
-            if(acc != null)
-            {
-                return acc;
-            }
-            return null;
+            return await _dataAccess.EditAccount(account);
         }
-        public ActionResult<Account> DeleteAccount(int accountId)
+        public async Task<ServiceResponse<Account>> DeleteAccount(int accountId)
         {
-            var accounts = _dataAccess.DeleteAccount(accountId);
-            if(accounts != null)
-            {
-                return accounts;
-            }
-            return null;
+            return await _dataAccess.DeleteAccount(accountId);
         }
-        public Account GetAccount(int accountId)
+        public async Task<ServiceResponse<Account>> GetAccount(int accountId)
         {
-            var accounts = _dataAccess.GetAccount(accountId);
-            if (accounts != null)
-            {
-                return accounts;
-            }
-            return null;
+            return await _dataAccess.GetAccount(accountId);
         }
-
-        public ICollection<Account> GetAccounts()
+        public async Task<ServiceResponse<List<Account>>> GetAccounts()
         {
-            var accounts = _dataAccess.GetAccounts();
-            if(accounts != null)
-            {
-                return accounts;
-            }
-            return null;
+            return await _dataAccess.GetAccounts();
         }
-
-
     }
 }

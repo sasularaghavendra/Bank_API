@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Bank_Services.Services
 {
@@ -15,50 +16,25 @@ namespace Bank_Services.Services
         {
             _dataAccess = dataAccess;
         }
-        public Customer AddCustomer(Customer customer)
+        public async Task<ServiceResponse<Customer>> AddCustomer(Customer customer)
         {
-            if(customer != null)
-            {
-                Customer cust = _dataAccess.AddCustomer(customer);
-                return cust;
-            }
-            return null;
+            return await _dataAccess.AddCustomer(customer);
         }
-        public ActionResult<Customer> EditCustomer(Customer customer)
+        public async Task<ServiceResponse<Customer>> EditCustomer(Customer customer)
         {
-            var cust = _dataAccess.EditCustomer(customer);
-            if (cust != null)
-            {
-                return cust;
-            }
-            return null;
+            return await _dataAccess.EditCustomer(customer);
         }
-        public ActionResult<Customer> DeleteCustomer(int customerId)
+        public async Task<ServiceResponse<Customer>> DeleteCustomer(int customerId)
         {
-            var customer = _dataAccess.DeleteCustomer(customerId);
-            if (customer != null)
-            {
-                return customer;
-            }
-            return null;
+            return await _dataAccess.DeleteCustomer(customerId);
         }
-        public Customer GetCustomer(int customerId)
+        public async Task<ServiceResponse<Customer>> GetCustomer(int customerId)
         {
-            var customer = _dataAccess.GetCustomer(customerId);
-            if (customer != null)
-            {
-                return customer;
-            }
-            return null;
+            return await _dataAccess.GetCustomer(customerId);
         }
-        public ICollection<Customer> GetCustomers()
+        public async  Task<ServiceResponse<List<Customer>>> GetCustomers()
         {
-            var accounts = _dataAccess.GetCustomers();
-            if (accounts != null)
-            {
-                return accounts;
-            }
-            return null;
+            return await _dataAccess.GetCustomers();
         }
     }
 }

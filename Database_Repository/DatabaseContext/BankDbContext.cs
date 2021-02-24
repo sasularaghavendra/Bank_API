@@ -19,11 +19,10 @@ namespace Database_Repository.DatabaseContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            //configure composite key (Two primary key columns)
             modelBuilder.Entity<AccountBalance>().HasKey(acc => new { acc.AccountBalanceId, acc.AccountNumber });
+            //Create Identity column
             modelBuilder.Entity<AccountBalance>().Property(acc => acc.AccountBalanceId).UseIdentityColumn();
-
         }
-
     }
 }

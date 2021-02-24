@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database_Repository.Migrations
 {
     [DbContext(typeof(BankDbContext))]
-    [Migration("20210223131357_AddedDateColumnToTransactionAuditTable")]
-    partial class AddedDateColumnToTransactionAuditTable
+    [Migration("20210224060630_InitialDB")]
+    partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,21 +43,23 @@ namespace Database_Repository.Migrations
                     b.Property<int>("AccountBalanceId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
+                        .HasAnnotation("SqlServer:IdentityIncrement", 1)
+                        .HasAnnotation("SqlServer:IdentitySeed", 1)
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
 
                     b.Property<long>("AccountNumber")
                         .HasColumnType("bigint");
 
-                    b.Property<float>("Balance")
-                        .HasColumnType("real");
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Balance")
+                        .HasColumnType("float");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.HasKey("AccountBalanceId");
+                    b.HasKey("AccountBalanceId", "AccountNumber");
 
                     b.HasIndex("AccountId");
 

@@ -39,7 +39,11 @@ namespace Database_Repository.Migrations
             modelBuilder.Entity("Bank_Models.Models.AccountBalance", b =>
                 {
                     b.Property<int>("AccountBalanceId")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:IdentityIncrement", 1)
+                        .HasAnnotation("SqlServer:IdentitySeed", 1)
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<long>("AccountNumber")
                         .HasColumnType("bigint");
