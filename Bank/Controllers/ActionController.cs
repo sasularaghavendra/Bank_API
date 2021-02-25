@@ -1,12 +1,7 @@
 ﻿using Bank_Models.Models;
-using Bank_Services.Services;
-using Microsoft.AspNetCore.Http;
+using Bank_Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Bank.Controllers
@@ -15,36 +10,36 @@ namespace Bank.Controllers
     [ApiController]
     public class ActionController : ControllerBase
     {
-        private readonly ActionService _actionService;
-        public ActionController(ActionService actionService)
+        private readonly IActionData _action;
+        public ActionController(IActionData action)
         {
-            _actionService = actionService;
+            _action = action;
         }
 
         [HttpPost("AddAction")]
         public async Task<ServiceResponse<ActionData>> AddAction(ActionData action)
         {
-            return await _actionService.AddAction(action);
+            return await _action.AddAction(action);
         }
         [HttpPut("EditAction")]
         public async Task<ServiceResponse<ActionData>> EditAction(ActionData action)
         {
-            return await _actionService.EditAction(action);
+            return await _action.EditAction(action);
         }
         [HttpDelete("{actionId}")]
         public async Task<ServiceResponse<ActionData>> DeleteAction(int actionId)
         {
-            return await _actionService.DeleteAction(actionId);
+            return await _action.DeleteAction(actionId);
         }
         [HttpGet("GetAllActions")]
         public async Task<ServiceResponse<List<ActionData>>> GetAllActions()
         {
-            return await _actionService.GetAllActions();
+            return await _action.GetAllActions();
         }
         [HttpGet("{actionId}")]
         public async Task<ServiceResponse<ActionData>> GetAction(int actionId)
         {
-            return await _actionService.GetAction(actionId);
+            return await _action.GetAction(actionId);
         }
     }
 }

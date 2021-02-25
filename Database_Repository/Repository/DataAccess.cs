@@ -25,42 +25,71 @@ namespace Database_Repository.Repository
         }
         public async Task<ServiceResponse<Customer>> AddCustomer(Customer customer)
         {
-            customer.CustomerId = 0; //Identity value no need to pass
-            await _bankDbContext.Customers.AddAsync(customer);
-            await _bankDbContext.SaveChangesAsync();
-            serviceResponse.Data = customer;
-            serviceResponse.Message = $"Record added successfully...{customer.FullName}";
-            return serviceResponse;    
+            try
+            {
+                customer.CustomerId = 0; //Identity value no need to pass
+                await _bankDbContext.Customers.AddAsync(customer);
+                await _bankDbContext.SaveChangesAsync();
+                serviceResponse.Data = customer;
+                serviceResponse.Message = $"Record added successfully...{customer.FullName}";
+                return serviceResponse;
+            }
+            catch(Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+                return serviceResponse;
+            }
         }
         public async Task<ServiceResponse<Customer>> EditCustomer(Customer customer)
         {
-            var editCustomer = await _bankDbContext.Customers.FirstOrDefaultAsync(x => x.CustomerId == customer.CustomerId);
-            if (editCustomer != null)
+            try
             {
-                editCustomer.AccountId = customer.AccountId;
-                editCustomer.FirstName = customer.FirstName;
-                editCustomer.LastName = customer.LastName;
-                editCustomer.Username = customer.Username;
-                editCustomer.Password = customer.Password;
-                _bankDbContext.Customers.Update(editCustomer);
-                await _bankDbContext.SaveChangesAsync();
+                var editCustomer = await _bankDbContext.Customers.FirstOrDefaultAsync(x => x.CustomerId == customer.CustomerId);
+                if (editCustomer != null)
+                {
+                    editCustomer.AccountId = customer.AccountId;
+                    editCustomer.FirstName = customer.FirstName;
+                    editCustomer.LastName = customer.LastName;
+                    editCustomer.Username = customer.Username;
+                    editCustomer.Password = customer.Password;
+                    _bankDbContext.Customers.Update(editCustomer);
+                    await _bankDbContext.SaveChangesAsync();
 
-                serviceResponse.Message = $"Record Updated Successfully..{editCustomer.FullName}";
-                serviceResponse.Data = editCustomer;
+                    serviceResponse.Message = $"Record Updated Successfully..{editCustomer.FullName}";
+                    serviceResponse.Data = editCustomer;
+                    return serviceResponse;
+                }
+            }
+            catch(Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message; ;
                 return serviceResponse;
             }
+ 
             serviceResponse.Success = false;
             serviceResponse.Message = $"Record not found..{customer.FullName}";
             return serviceResponse;
         }
         public async Task<ServiceResponse<Customer>> GetCustomer(int customerId)
         {
-            var customer = await _bankDbContext.Customers.Include(x => x.Account).FirstOrDefaultAsync(x => x.CustomerId == customerId);
-            if (customer != null)
+            try
             {
-                serviceResponse.Data = customer;
+                var customer = await _bankDbContext.Customers.Include(x => x.Account).FirstOrDefaultAsync(x => x.CustomerId == customerId);
+                if (customer != null)
+                {
+                    serviceResponse.Data = customer;
+                    return serviceResponse;
+                }
+            }
+            catch(Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
                 return serviceResponse;
             }
+
             serviceResponse.Success = false;
             serviceResponse.Message = "Record not found.";
             return serviceResponse;
@@ -68,10 +97,19 @@ namespace Database_Repository.Repository
         public async Task<ServiceResponse<List<Customer>>> GetCustomers()
         {
             ServiceResponse<List<Customer>> service = new ServiceResponse<List<Customer>>();
-            var customer = await _bankDbContext.Customers.Include(x => x.Account).ToListAsync();
-            if (customer != null)
+            try
             {
-                service.Data = customer;
+                var customer = await _bankDbContext.Customers.Include(x => x.Account).ToListAsync();
+                if (customer != null)
+                {
+                    service.Data = customer;
+                    return service;
+                }
+            }
+            catch(Exception ex)
+            {
+                service.Success = false;
+                service.Message = ex.Message;
                 return service;
             }
             service.Success = false;
@@ -80,13 +118,22 @@ namespace Database_Repository.Repository
         }
         public async Task<ServiceResponse<Customer>> DeleteCustomer(int id)
         {
-            var customer = await _bankDbContext.Customers.FirstOrDefaultAsync(x => x.CustomerId == id);
-            if (customer != null)
+            try
             {
-                _bankDbContext.Customers.Remove(customer);
-                await _bankDbContext.SaveChangesAsync();
-                serviceResponse.Data = customer;
-                serviceResponse.Message = $"Record deleted successfully..{customer.FullName}";
+                var customer = await _bankDbContext.Customers.FirstOrDefaultAsync(x => x.CustomerId == id);
+                if (customer != null)
+                {
+                    _bankDbContext.Customers.Remove(customer);
+                    await _bankDbContext.SaveChangesAsync();
+                    serviceResponse.Data = customer;
+                    serviceResponse.Message = $"Record deleted successfully..{customer.FullName}";
+                    return serviceResponse;
+                }
+            }
+            catch(Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
                 return serviceResponse;
             }
             serviceResponse.Success = false;

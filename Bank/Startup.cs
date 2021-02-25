@@ -42,11 +42,6 @@ namespace Bank
             services.AddScoped<IActionData, ActionService>();
             services.AddScoped<IAccountBalance, AccountBalanceService>();
             services.AddScoped<IAuthentication, Bank_Services.Services.AuthenticationService>();
-            services.AddScoped<CustomerService>();
-            services.AddScoped<AccountService>();
-            services.AddScoped<ActionService>();
-            services.AddScoped<AccountBalanceService>();
-            services.AddScoped<Bank_Services.Services.AuthenticationService>();
             services.AddScoped<DataAccess>();
             services.AddScoped<AccountDbAccess>();
             services.AddScoped<ActionAccess>();

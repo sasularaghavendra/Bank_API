@@ -114,6 +114,7 @@ namespace Database_Repository.Repository
                     _bankDbContext.Accounts.Remove(account);
                     await _bankDbContext.SaveChangesAsync();
                     serviceResponse.Data = account;
+                    serviceResponse.Message = "Record deleted";
                     return serviceResponse;
                 }
                 serviceResponse.Success = false;

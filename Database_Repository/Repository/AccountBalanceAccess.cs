@@ -83,15 +83,15 @@ namespace Database_Repository.Repository
         {
             try
             {
-                var depositAccountDetails = await _bankDbContext.AccountBalances.Include(x => x.Customer)
+                var withdrawAccountDetails = await _bankDbContext.AccountBalances.Include(x => x.Customer)
                                                                             .ThenInclude(x => x.Account)
                                                                             .FirstOrDefaultAsync(x => x.AccountNumber == accountBalance.AccountNumber && x.AccountId == accountBalance.AccountId);
-                if (depositAccountDetails != null)
+                if (withdrawAccountDetails != null)
                 {
-                    if (depositAccountDetails.Balance < accountBalance.Balance)
+                    if (withdrawAccountDetails.Balance < accountBalance.Balance)
                     {
                         serviceResponse.Success = false;
-                        serviceResponse.Message = $"Insufficient funds.... Available balance in your account is {depositAccountDetails.Balance}";
+                        serviceResponse.Message = $"Insufficient funds.... Available balance in your account is {withdrawAccountDetails.Balance}";
                         return serviceResponse;
                     }
                     else
@@ -100,15 +100,15 @@ namespace Database_Repository.Repository
                         //Adding data into transaction table to capture transaction history
                         TransactionAudit audit = new TransactionAudit();
                         audit.ActionId = 3; //Withdraw
-                        audit.CustomerId = depositAccountDetails.CustomerId;
+                        audit.CustomerId = withdrawAccountDetails.CustomerId;
                         audit.Balance = accountBalance.Balance;
                         audit.CreatedDate = DateTime.Now;
                         await _bankDbContext.TransactionAudits.AddAsync(audit);
-                        depositAccountDetails.Balance = (depositAccountDetails.Balance - accountBalance.Balance);
-                        _bankDbContext.AccountBalances.Update(depositAccountDetails);
+                        withdrawAccountDetails.Balance = (withdrawAccountDetails.Balance - accountBalance.Balance);
+                        _bankDbContext.AccountBalances.Update(withdrawAccountDetails);
                         await _bankDbContext.SaveChangesAsync();
-                        serviceResponse.Data = depositAccountDetails;
-                        serviceResponse.Message = $"Amount {accountBalance.Balance} withdrawn successfull.. Available balance is {depositAccountDetails.Balance}";
+                        serviceResponse.Data = withdrawAccountDetails;
+                        serviceResponse.Message = $"Amount {accountBalance.Balance} withdrawn successfull.. Available balance is {withdrawAccountDetails.Balance}";
                         return serviceResponse;
                     }
                 }

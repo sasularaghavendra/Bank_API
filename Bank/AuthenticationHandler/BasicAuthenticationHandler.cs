@@ -1,4 +1,5 @@
 ﻿using Bank_Models.Models;
+using Bank_Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,17 +14,19 @@ namespace Bank.AuthenticationHandler
 {
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        private readonly Bank_Services.Services.AuthenticationService _authenticationService;
+        //private readonly Bank_Services.Services.AuthenticationService _authenticationService;
+        private readonly IAuthentication _authentication;
         public static ServiceResponse<Customer> captureUserData = new ServiceResponse<Customer>();
         public BasicAuthenticationHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
-            Bank_Services.Services.AuthenticationService authenticationService
+            //Bank_Services.Services.AuthenticationService authenticationService
+            IAuthentication authentication
             ) : base(options, logger, encoder, clock)
         {
-            _authenticationService = authenticationService;
+            _authentication = authentication;
         }
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
@@ -38,7 +41,7 @@ namespace Bank.AuthenticationHandler
                 string userName = credentials[0];
                 string password = credentials[1];
 
-                ServiceResponse<Customer> serviceResponse = await _authenticationService.UserAuthentication(userName, password);
+                ServiceResponse<Customer> serviceResponse = await _authentication.UserAuthentication(userName, password);
                 captureUserData = serviceResponse;
                 if (serviceResponse.Data == null)
                     AuthenticateResult.Fail("Invalid Username or Password");
