@@ -1,37 +1,29 @@
 ﻿using Bank_Models.Models;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Bank.Controllers;
-using Database_Repository.DatabaseContext;
-using Database_Repository.Repository;
 
 namespace Bank.AuthenticationHandler
 {
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        private readonly BankDbContext _bankDbContext;
-        ServiceResponse<Customer> serviceResponse = new ServiceResponse<Customer>();
+        private readonly Bank_Services.Services.AuthenticationService _authenticationService;
+        public static ServiceResponse<Customer> captureUserData = new ServiceResponse<Customer>();
         public BasicAuthenticationHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
-            BankDbContext bankDbContext
+            Bank_Services.Services.AuthenticationService authenticationService
             ) : base(options, logger, encoder, clock)
         {
-            _bankDbContext = bankDbContext;
+            _authenticationService = authenticationService;
         }
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
@@ -46,7 +38,8 @@ namespace Bank.AuthenticationHandler
                 string userName = credentials[0];
                 string password = credentials[1];
 
-                serviceResponse.Data = await _bankDbContext.Customers.Where(x => x.Username == userName && x.Password == password).FirstOrDefaultAsync();
+                ServiceResponse<Customer> serviceResponse = await _authenticationService.UserAuthentication(userName, password);
+                captureUserData = serviceResponse;
                 if (serviceResponse.Data == null)
                     AuthenticateResult.Fail("Invalid Username or Password");
                 else
@@ -60,7 +53,7 @@ namespace Bank.AuthenticationHandler
             }
             catch (Exception ex)
             {
-                return AuthenticateResult.Fail("Invalid Username or Password");
+                return AuthenticateResult.Fail(ex.Message);
             }
             return AuthenticateResult.Fail("Authentication failed");
 
